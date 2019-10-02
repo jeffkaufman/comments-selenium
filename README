@@ -1,0 +1,7 @@
+Archives public Facebook comments
+
+If you get an error like "Chrome version must be between 70 and 73" you need to
+upgrade chromedriver.  Chrome updates automatically but Chromedriver doesn't.
+I use:
+
+    brew cask upgrade chromedriver
