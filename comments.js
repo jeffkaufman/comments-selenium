@@ -36,6 +36,11 @@ function process_comment(comment_div) {
   var actions = comment_div.querySelector(
        "ul[data-testid='UFI2CommentActionLinks/root'] > li >" +
        "a[href^='https://www.facebook.com/jefftk/posts/']");
+  if (!actions) {
+    actions = comment_div.querySelector(
+       "ul[data-testid='UFI2CommentActionLinks/root'] > li >" +
+       "a[href^='https://www.facebook.com/photo.php']");
+  }
   var abbr = actions.querySelector("abbr[data-utime]");
 
   try {
