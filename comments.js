@@ -1,4 +1,4 @@
-var expand_selectors = 
+var expand_selectors =
   // expand_comments
   "a[data-testid='UFI2CommentsPagerRenderer/pager_depth_0']," +
   // expand_replies
@@ -33,11 +33,17 @@ function process_comment(comment_div) {
        "data-hovercard").replace("/ajax/hovercard/user.php?id=", "");
   var body_div = comment_div.querySelector(
        "div[data-testid='UFI2Comment/body'] > div");
+  var actions = comment_div.querySelector(
+       "ul[data-testid='UFI2CommentActionLinks/root'] > li >" +
+       "a[href^='https://www.facebook.com/jefftk/posts/']");
+  var abbr = actions.querySelector("abbr[data-utime]");
 
   try {
     var name = body_div.children[0].textContent;
     var comment_html = body_div.children[1].innerHTML;
-    return [name, user_id, comment_html];
+    var ts = abbr.getAttribute("data-utime");
+    var link = actions.getAttribute("href");
+    return [name, link, user_id, ts, comment_html];
   } catch(e) {
     return null;
   }

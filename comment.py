@@ -17,7 +17,7 @@ def run(driver):
   comment_js = open("comments.js").read()
 
   for slug in sys.argv[1:]:
-    fname = "output/%s.raw.json" % slug
+    fname = "fb-comment-raw/%s.raw.json" % slug
     if os.path.exists(fname):
       continue
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     driver = webdriver.Chrome()
     run(driver)
   finally:
-    driver.quit()
+    #driver.quit()
     pass
 
 
