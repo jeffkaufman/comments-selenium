@@ -1,5 +1,8 @@
 Archives public Facebook comments
 
+By default this only archives comments on my posts, but it should be easy to
+play with if you want to use this for your own posts.
+
 If you get an error like "Chrome version must be between 70 and 73" you need to
 upgrade chromedriver.  Chrome updates automatically but Chromedriver doesn't.
 I use:
