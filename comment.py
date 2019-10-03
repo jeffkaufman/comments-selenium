@@ -45,7 +45,7 @@ if __name__ == "__main__":
     driver = webdriver.Chrome()
     run(driver)
   finally:
-    #driver.quit()
+    driver.quit()
     pass
 
 
