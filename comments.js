@@ -41,6 +41,11 @@ function process_comment(comment_div) {
        "ul[data-testid='UFI2CommentActionLinks/root'] > li >" +
        "a[href^='https://www.facebook.com/photo.php']");
   }
+  if (!actions) {
+    actions = comment_div.querySelector(
+       "ul[data-testid='UFI2CommentActionLinks/root'] > li >" +
+       "a[href^='https://www.facebook.com/notes/jeff-kaufman/']");
+  }
   var abbr = actions.querySelector("abbr[data-utime]");
 
   try {

@@ -13,16 +13,21 @@ def click(element):
   driver.execute_script("arguments[0].click()", element)
 
 def run(driver):
-  driver.implicitly_wait(2) # seconds
+  driver.implicitly_wait(60) # seconds
   comment_js = open("comments.js").read()
 
   for slug in sys.argv[1:]:
+    print(slug)
+    url_base = "https://www.facebook.com/jefftk/posts/"
+    if slug.startswith("fb/note/"):
+      slug = slug[len("fb/note/"):]
+      url_base = "https://www.facebook.com/notes/jeff-kaufman/"
+
     fname = "fb-comment-raw/%s.raw.json" % slug
     if os.path.exists(fname):
       continue
-
-    print(slug)
-    driver.get("https://www.facebook.com/jefftk/posts/" + slug)
+      
+    driver.get(url_base + slug)
     try:
       see_comments = driver.find_element_by_css_selector(
           "a[data-testid='UFI2CommentsCount/root']")
