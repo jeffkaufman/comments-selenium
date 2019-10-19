@@ -16,14 +16,16 @@ def run(driver):
   driver.implicitly_wait(60) # seconds
   comment_js = open("comments.js").read()
 
-  for slug in sys.argv[1:]:
+  working_dir = sys.argv[1]
+
+  for slug in sys.argv[2:]:
     print(slug)
     url_base = "https://www.facebook.com/jefftk/posts/"
     if slug.startswith("fb/note/"):
       slug = slug[len("fb/note/"):]
       url_base = "https://www.facebook.com/notes/jeff-kaufman/"
 
-    fname = "fb-comment-raw/%s.raw.json" % slug
+    fname = "%s/%s.raw.json" % (working_dir, slug)
     if os.path.exists(fname):
       continue
       

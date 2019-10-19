@@ -1,3 +1,4 @@
+import sys
 import re
 import os
 import json
@@ -92,11 +93,11 @@ def clean(raw_comments):
   return clean_comments
 
 def start():
-  for fname_in in os.listdir('fb-comment-raw'):
-    slug = fname_in.split('.')[0]
-    fname_out = 'fb-comment-archive/fb-%s.js' % slug
+  working_dir, *slugs = sys.argv[1:]
+  for slug in slugs:
+    fname_out = '%s/fb-%s.js' % (working_dir, slug)
     if not os.path.exists(fname_out):
-      with open('fb-comment-raw/%s' % fname_in) as inf:
+      with open('%s/%s.raw.json' % (working_dir, slug)) as inf:
         with open(fname_out, 'w') as outf:
           outf.write(json.dumps(clean(json.loads(inf.read()))))
 
