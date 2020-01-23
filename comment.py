@@ -30,17 +30,13 @@ def run(driver):
       continue
       
     driver.get(url_base + slug)
-    try:
-      see_comments = driver.find_element_by_css_selector(
-          "a[data-testid='UFI2CommentsCount/root']")
-    except NoSuchElementException:
-      result = []
-    else:
-      click(see_comments)
-      driver.execute_script(comment_js)
-      WebDriverWait(driver, 15).until(EC.title_is("ready"))
+    driver.execute_script(comment_js)
+    WebDriverWait(driver, 15).until(EC.title_is("ready"))
     
-      result = driver.execute_script("return window.COLLECTED_COMMENTS;");
+    result = driver.execute_script("return window.COLLECTED_COMMENTS;");
+
+    import pprint
+    pprint.pprint(result)
 
     with open(fname, "w") as outf:
       outf.write(json.dumps(result))
