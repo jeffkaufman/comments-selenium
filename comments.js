@@ -28,9 +28,10 @@ function expand_things(callback) {
 }
 
 function process_comment(comment_div) {
-  var user_id = comment_div.querySelector(
-       "a[data-hovercard^='/ajax/hovercard/user.php?id=']").getAttribute(
-       "data-hovercard").replace("/ajax/hovercard/user.php?id=", "");
+  var data_hovercard = comment_div.querySelector(
+     "a[data-hovercard^='/ajax/hovercard/user.php?id=']");
+  var user_id = data_hovercard ? data_hovercard.getAttribute(
+     "data-hovercard").replace("/ajax/hovercard/user.php?id=", "") : "-1";
   var body_div = comment_div.querySelector(
        "div[data-testid='UFI2Comment/body'] > div");
   var actions = comment_div.querySelector(
@@ -72,15 +73,26 @@ function examine_comments() {
     }
     collected_comments.push([parent_comment, child_comments]);
   }
+  done(collected_comments);
+}
+
+function done(collected_comments) {
   window.COLLECTED_COMMENTS = collected_comments;
   document.title = "ready";
 }
 
-expand_things(function() {
-  var cta_button = document.querySelector(close_cta);
-  if (cta_button) {
-    cta_button.click();
-  }
-  examine_comments();
-});
+var expand_comments_button = document.querySelector(
+   "a[data-testid='UFI2CommentsCount/root']");
+if (expand_comments_button) {
+  expand_comments_button.click();
+  expand_things(function() {
+    var cta_button = document.querySelector(close_cta);
+    if (cta_button) {
+      cta_button.click();
+    }
+    examine_comments();
+  });
+} else {
+  done([]);
+}
 
