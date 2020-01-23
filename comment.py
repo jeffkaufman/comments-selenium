@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, SessionNotCreatedException
 
 def click(element):
   driver.execute_script("arguments[0].click()", element)
@@ -48,13 +48,16 @@ def run(driver):
     time.sleep(5)
 
 if __name__ == "__main__":
+  driver = None
   try:
     driver = webdriver.Chrome()
     run(driver)
+  except SessionNotCreatedException as e:
+    raise Exception("consider 'brew cask upgrade chromedriver'", e)
   finally:
-    driver.quit()
-    pass
-
+    if driver:
+      driver.quit()
+      pass
 
 
 
