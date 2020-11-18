@@ -20,6 +20,7 @@ def run(driver):
 
   for slug in sys.argv[2:]:
     print(slug)
+
     url_base = "https://www.facebook.com/jefftk/posts/"
     if slug.startswith("fb/note/"):
       slug = slug[len("fb/note/"):]
@@ -28,11 +29,11 @@ def run(driver):
     fname = "%s/%s.raw.json" % (working_dir, slug)
     if os.path.exists(fname):
       continue
-      
+
     driver.get(url_base + slug)
     driver.execute_script(comment_js)
     WebDriverWait(driver, 15).until(EC.title_is("ready"))
-    
+
     result = driver.execute_script("return window.COLLECTED_COMMENTS;");
 
     import pprint
@@ -54,6 +55,3 @@ if __name__ == "__main__":
     if driver:
       driver.quit()
       pass
-
-
-

@@ -17,6 +17,9 @@ def sanitize_html_names(comment_html, raw_names):
   return comment_html
 
 def sanitize_html(comment_html, raw_names):
+  if not comment_html:
+    return "[empty]"
+
   comment_html = sanitize_html_names(comment_html, raw_names)
   if "https://l.facebook.com" in comment_html:
     for fb_link in re.findall('https://l[.]facebook[.]com/l[.]php[?]u=[^"]*',
@@ -39,7 +42,7 @@ def comment_id(link):
   if 'reply_comment_id' in qp:
     raw_reply_id, = qp['reply_comment_id']
     cid += "_" + raw_reply_id
-  return cid  
+  return cid
 
 def clean_single(raw_comment, raw_names):
   # input format:
@@ -59,6 +62,9 @@ def clean_single(raw_comment, raw_names):
   if not raw_comment:
     return ["unknown", "#", "unknown", "unknown", "-1", []]
 
+  import pprint
+  pprint.pprint(raw_comment)
+
   name, link, user_id, timestamp, comment_html = raw_comment
   if user_id in FB_SHOW_BLACKLIST:
     return ["opted out", "#", "unknown",
@@ -76,13 +82,16 @@ def clean_single(raw_comment, raw_names):
 
 def clean(raw_comments):
   raw_names = set()
-  for raw_comment in raw_comments:
+
+  # DFS implementation in comments.js download reverses lists.
+
+  for raw_comment in reversed(raw_comments):
     parent, children = raw_comment
     if parent:
       raw_names.add(parent[0])
-      for child in children:
+      for child in reversed(children):
         if child:
-          raw_names.add(child[0])   
+          raw_names.add(child[0])
 
   clean_comments = []
   for raw_comment in raw_comments:
@@ -97,9 +106,11 @@ def start():
   for slug in slugs:
     fname_out = '%s/fb-%s.js' % (working_dir, slug)
     if not os.path.exists(fname_out):
-      with open('%s/%s.raw.json' % (working_dir, slug)) as inf:
-        with open(fname_out, 'w') as outf:
-          outf.write(json.dumps(clean(json.loads(inf.read()))))
+      fname_in = '%s/%s.raw.json' % (working_dir, slug)
+      if os.path.exists(fname_in):
+        with open(fname_in) as inf:
+          with open(fname_out, 'w') as outf:
+            outf.write(json.dumps(clean(json.loads(inf.read()))))
 
 if __name__ == "__main__":
   start()
