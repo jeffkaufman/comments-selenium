@@ -48,8 +48,7 @@ function examine_comments() {
     var ts = null;
     var comment_html = null;
 
-    var parent_comment = null;
-    var child_comments = [];
+    var thread = [];
 
     var nodes = [top_level_ul.children[i]];
     while (nodes.length > 0) {
@@ -79,7 +78,6 @@ function examine_comments() {
         name = node.textContent;
 
         // This is assuming author_class_name is the last one we get.
-
         var comment = [name, link, userid, ts, comment_html];
         name = null;
         ts = null;
@@ -87,17 +85,15 @@ function examine_comments() {
         link = null;
         userid = null;
 
-        if (parent_comment) {
-          child_comments.push(comment);
-        } else {
-          parent_comment = comment;
-        }
+        thread.push(comment);
       }
       for (var j = 0; j < node.children.length; j++) {
         nodes.push(node.children[j]);
       }
     }
-    collected_comments.push([parent_comment, child_comments]);
+    // Sort by time ascending.
+    thread.sort(function(a, b) { return Number(a[3]) - Number(b[3]); });
+    collected_comments.push(thread);
   }
   done(collected_comments);
 }

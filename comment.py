@@ -51,7 +51,7 @@ if __name__ == "__main__":
     run(driver)
   except SessionNotCreatedException as e:
     raise Exception("consider 'brew cask upgrade chromedriver'", e)
-  finally:
-    if driver:
-      driver.quit()
-      pass
+  #finally:
+  #  if driver:
+  #    driver.quit()
+  #    pass

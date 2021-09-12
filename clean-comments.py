@@ -80,24 +80,18 @@ def clean_single(raw_comment, raw_names):
     []
   ]
 
-def clean(raw_comments):
+def clean(raw_threads):
   raw_names = set()
 
-  # DFS implementation in comments.js download reverses lists.
-
-  for raw_comment in reversed(raw_comments):
-    parent, children = raw_comment
-    if parent:
-      raw_names.add(parent[0])
-      for child in reversed(children):
-        if child:
-          raw_names.add(child[0])
+  for raw_thread in reversed(raw_threads):
+    for raw_comment in raw_thread:
+      raw_names.add(raw_comment[0])
 
   clean_comments = []
-  for raw_comment in raw_comments:
-    parent, children = raw_comment
-    clean_parent = clean_single(parent, raw_names)
-    clean_parent[-1] = [clean_single(child, raw_names) for child in children]
+  for raw_thread in raw_threads:
+    clean_thread = [clean_single(raw_comment) for raw_comment in raw_thread]
+    clean_parent = clean_thread[0]
+    clean_parent[-1] = clean_thread[1:]
     clean_comments.append(clean_parent)
   return clean_comments
 

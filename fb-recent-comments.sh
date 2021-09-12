@@ -8,7 +8,8 @@ mkdir -p $WORKING_DIR
 
 scp ps:wsgi/private.py .
 
-RECENT_POST_IDS=$(cat ~/personal/backups/current/www-jefftk-com/news_raw.html \
+RECENT_POST_IDS=$(\
+  cat ~/Google\ Drive/backups/current/www-jefftk-com/news_raw.html \
   | grep 'Tags:.*fb/' \
   | grep -o 'fb/[0-9]*' \
   | head -n 50 \

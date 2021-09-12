@@ -1,4 +1,4 @@
-Archives public Facebook comments
+# Archive public Facebook comments
 
 By default this only archives comments on my posts, but it should be easy to
 play with if you want to use this for your own posts.
@@ -8,3 +8,24 @@ upgrade chromedriver.  Chrome updates automatically but Chromedriver doesn't.
 I use:
 
     brew cask upgrade chromedriver
+
+## Usage
+
+Since FB compresses their IDs and sometimes changes them, and also tweaks their
+pages, you should expect to need to edit the script each time you use it.
+
+Open a private browsing window (so you don't scrape anything that should only
+be accessible to you as a logged in user), load a page with comments, and try
+pasting comments.js into the console.  If everything is working:
+
+1. The comments should all be expanded.
+
+2. The login overlay should be dismissed.
+
+3. window.COLLECTED_COMMENTS will have the comments.
+
+Then try running comment.py by itself.  Ex:
+
+    python3 comment.py tmp 819765171902
+
+If that works, it should be all set.
