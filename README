@@ -29,3 +29,19 @@ Then try running comment.py by itself.  Ex:
     python3 comment.py tmp 819765171902
 
 If that works, it should be all set.
+
+## Extension usage
+
+1. Visit chrome://extensions
+
+2. Enable Developer Mode
+
+3. Click the "Load unpacked" and select the extension directory
+
+4. Click "Details" on the extension card
+
+5. Enable "Allow in Incognito"
+
+6. Open Incognito and visit https://www.facebook.com/jefftk/posts/819765171902
+   or something. It should create a file in the Downloads folder named
+   819765171902.json with the comments.
