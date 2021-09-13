@@ -4,20 +4,19 @@
   "version": "1.0",
   "manifest_version": 3,
   "permissions": [
-    "scripting",
     "activeTab",
     "downloads"
   ],
-  "web_accessible_resources": [{
-    "resources": ["comments.js"],
-    "matches": ["<all_urls>"]
-  }],
+  "background": {
+    "service_worker": "comments-outer.js"
+  },
   "content_scripts": [
        {
          "matches": [
-           "https://www.facebook.com/jefftk/posts/*"
+           "https://www.facebook.com/jefftk/posts/*",
+           "https://www.jefftk.com/test"
          ],
-         "js": ["comments-outer.js"]
+         "js": ["comments.js"]
        }
   ]
 }

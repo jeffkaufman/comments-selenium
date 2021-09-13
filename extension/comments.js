@@ -98,12 +98,25 @@ function examine_comments() {
   done(collected_comments);
 }
 
+function makeDataUrl(body) {
+  return "data:application/json;base64," +
+    btoa(unescape(encodeURIComponent(body)));
+}
+
 function done(collected_comments) {
-  window.COLLECTED_COMMENTS = collected_comments;
-  document.title = "ready";
+  if (!collected_comments.length &&
+      window.location.href !== "https://www.jefftk.com/test") {
+    document.title = "no comments";
+    return;
+  }
+
+  document.title = collected_comments.length + " comment" +
+    (collected_comments.length == 1 ? "" : "s");
   var location_parts = document.location.href.split("/");
   var slug = location_parts[location_parts.length - 1];
-  window.postMessage(["comments", slug, collected_comments], "*");
+  chrome.runtime.sendMessage(
+    "kgdjdknhampiciojlpdpinjlbjbnnhjm",
+    [slug, makeDataUrl(JSON.stringify(collected_comments))]);
 }
 
 var expand_comments_potential = document.getElementsByClassName(

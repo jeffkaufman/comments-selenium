@@ -1,18 +1,12 @@
-var s = document.createElement('script');
-s.src = chrome.runtime.getURL('comments.js');
-s.onload = function() {
-  this.remove();
-};
-(document.head || document.documentElement).appendChild(s);
-
-window.addEventListener("message", function(event) {
-  console.log("recv", event.data);
-  var [str, slug, collected_comments] = event.data;
-  if (str !== "comments") return;
+chrome.runtime.onMessage.addListener(function(message, sender, reply) {
+  console.log("recv", message, sender);
+  if (sender.id != 'kgdjdknhampiciojlpdpinjlbjbnnhjm') return;
+  const fname = message[0] + ".json";
+  const url = message[1];
 
   chrome.downloads.download({
-    body: JSON.stringify(collected_comments),
     conflictAction: "overwrite",
-    filename: slug + ".json",
+    filename: fname,
+    url: url,
   });
 });
