@@ -3,34 +3,7 @@
 By default this only archives comments on my posts, but it should be easy to
 play with if you want to use this for your own posts.
 
-If you get an error like "Chrome version must be between 70 and 73" you need to
-upgrade chromedriver.  Chrome updates automatically but Chromedriver doesn't.
-I use:
-
-    brew cask upgrade chromedriver
-
 ## Usage
-
-Since FB compresses their IDs and sometimes changes them, and also tweaks their
-pages, you should expect to need to edit the script each time you use it.
-
-Open a private browsing window (so you don't scrape anything that should only
-be accessible to you as a logged in user), load a page with comments, and try
-pasting comments.js into the console.  If everything is working:
-
-1. The comments should all be expanded.
-
-2. The login overlay should be dismissed.
-
-3. window.COLLECTED_COMMENTS will have the comments.
-
-Then try running comment.py by itself.  Ex:
-
-    python3 comment.py tmp 819765171902
-
-If that works, it should be all set.
-
-## Extension usage
 
 1. Visit chrome://extensions
 
@@ -42,6 +15,11 @@ If that works, it should be all set.
 
 5. Enable "Allow in Incognito"
 
-6. Open Incognito and visit https://www.facebook.com/jefftk/posts/819765171902
+6. Edit comments.js and comments-outer.js to replace the extension ID with the
+   ID on your system.
+
+7. Open Incognito and visit https://www.facebook.com/jefftk/posts/819765171902
    or something. It should create a file in the Downloads folder named
    819765171902.json with the comments.
+
+8. archive.py is what I use next to clean it and copy to my server.
