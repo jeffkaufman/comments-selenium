@@ -1,0 +1,23 @@
+{
+  "name": "Facebook Comment Saver",
+  "description": "saves facebook comments",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "downloads"
+  ],
+  "web_accessible_resources": [{
+    "resources": ["comments.js"],
+    "matches": ["<all_urls>"]
+  }],
+  "content_scripts": [
+       {
+         "matches": [
+           "https://www.facebook.com/jefftk/posts/*"
+         ],
+         "js": ["comments-outer.js"]
+       }
+  ]
+}
