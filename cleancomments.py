@@ -62,8 +62,8 @@ def clean_single(raw_comment, raw_names):
   if not raw_comment:
     return ["unknown", "#", "unknown", "unknown", "-1", []]
 
-  import pprint
-  pprint.pprint(raw_comment)
+  #import pprint
+  #pprint.pprint(raw_comment)
 
   name, link, user_id, timestamp, comment_html = raw_comment
   if user_id in FB_SHOW_BLACKLIST:
@@ -89,22 +89,9 @@ def clean(raw_threads):
 
   clean_comments = []
   for raw_thread in raw_threads:
-    clean_thread = [clean_single(raw_comment) for raw_comment in raw_thread]
+    clean_thread = [clean_single(raw_comment, raw_names)
+                    for raw_comment in raw_thread]
     clean_parent = clean_thread[0]
     clean_parent[-1] = clean_thread[1:]
     clean_comments.append(clean_parent)
   return clean_comments
-
-def start():
-  working_dir, *slugs = sys.argv[1:]
-  for slug in slugs:
-    fname_out = '%s/fb-%s.js' % (working_dir, slug)
-    if not os.path.exists(fname_out):
-      fname_in = '%s/%s.raw.json' % (working_dir, slug)
-      if os.path.exists(fname_in):
-        with open(fname_in) as inf:
-          with open(fname_out, 'w') as outf:
-            outf.write(json.dumps(clean(json.loads(inf.read()))))
-
-if __name__ == "__main__":
-  start()
