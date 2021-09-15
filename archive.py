@@ -3,7 +3,7 @@ import os
 import shutil
 import json
 import subprocess
-
+import filecmp
 
 from cleancomments import clean
 
@@ -40,12 +40,16 @@ def start():
     shutil.copyfile(fname, os.path.join(archive, leaf))
 
     outname = os.path.join(archive, "fb-%s.js" % (slug))
+    outprev = outname + ".prev"
+    if os.path.exists(outname):
+      shutil.move(outname, outprev)
 
     with open(fname) as inf:
       with open(outname, 'w') as outf:
         outf.write(json.dumps(clean(json.loads(inf.read()))))
-    
-    subprocess.run(["scp", outname, "ps:wsgi/fb-comment-archive/"])
+
+    if not os.path.exists(outprev) or not filecmp.cmp(outname, outprev):
+      subprocess.run(["scp", outname, "ps:wsgi/fb-comment-archive/"])
                            
 if __name__ == "__main__":
   start()
