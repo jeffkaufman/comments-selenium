@@ -115,7 +115,7 @@ function done(collected_comments) {
   var location_parts = document.location.href.split("/");
   var slug = location_parts[location_parts.length - 1];
   chrome.runtime.sendMessage(
-    "kgdjdknhampiciojlpdpinjlbjbnnhjm",
+    /* extension id not needed */ undefined,
     [slug, makeDataUrl(JSON.stringify(collected_comments))]);
 }
 

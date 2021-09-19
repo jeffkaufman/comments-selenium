@@ -1,6 +1,4 @@
-chrome.runtime.onMessage.addListener(function(message, sender, reply) {
-  console.log("recv", message, sender);
-  if (sender.id != 'kgdjdknhampiciojlpdpinjlbjbnnhjm') return;
+chrome.runtime.onMessage.addListener(function(message) {
   const fname = message[0] + ".json";
   const url = message[1];
 
