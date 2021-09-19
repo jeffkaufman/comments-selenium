@@ -15,11 +15,8 @@ play with if you want to use this for your own posts.
 
 5. Enable "Allow in Incognito"
 
-6. Edit comments.js and comments-outer.js to replace the extension ID with the
-   ID on your system.
-
-7. Open Incognito and visit https://www.facebook.com/jefftk/posts/819765171902
+6. Open Incognito and visit https://www.facebook.com/jefftk/posts/819765171902
    or something. It should create a file in the Downloads folder named
    819765171902.json with the comments.
 
-8. archive.py is what I use next to clean it and copy to my server.
+7. archive.py is what I use next to clean it and copy to my server.
