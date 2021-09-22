@@ -35,8 +35,6 @@ def start():
     if not slug.isdigit():
       continue
 
-    print (slug)
-
     shutil.copyfile(fname, os.path.join(archive, leaf))
 
     outname = os.path.join(archive, "fb-%s.js" % (slug))
