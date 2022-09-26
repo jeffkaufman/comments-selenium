@@ -19,8 +19,8 @@ def start():
             outf.write(json.dumps(clean(json.loads(inf.read()))))
 
 def start():
-  downloads = "/Users/jefftk/Downloads"
-  archive = "/Users/jefftk/Google Drive/comment-archive"
+  downloads = os.path.expanduser("~/Downloads")
+  archive = os.path.expanduser("~/Google Drive/My Drive/comment-archive")
   
   for fname in glob.glob(os.path.join(downloads, "*.json")):
     leaf = os.path.basename(fname)
@@ -32,7 +32,7 @@ def start():
     if ext != "json":
       continue
 
-    if not slug.isdigit():
+    if not slug.isdigit() and not slug.startswith("pfbid"):
       continue
 
     shutil.copyfile(fname, os.path.join(archive, leaf))
