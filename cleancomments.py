@@ -5,7 +5,8 @@ import json
 import urllib.parse
 
 from private import INITIALS
-from private import FB_SHOW_BLACKLIST
+from private import FB_SHOW_BLACKLIST_IDS
+from private import FB_SHOW_BLACKLIST_NAMES
 
 def query_params(url):
   return urllib.parse.parse_qs(urllib.parse.urlparse(url).query)
@@ -47,51 +48,47 @@ def comment_id(link):
 def clean_single(raw_comment, raw_names):
   # input format:
   #   name (needs sanitizing)
-  #   link
-  #   user id (don't include in output)
-  #   timestamp
-  #   comment html
+  #   null
+  #   null
+  #   null
+  #   comment html (needs sanitizing)
   #
   # output format:
   #   first name / initials (cleaned name)
-  #   link (unchanged)
-  #   comment id (derived from link)
+  #   link (absent)
+  #   comment id (absent)
   #   comment_html
-  #   timestamp
+  #   timestamp (absent)
   #   children
   if not raw_comment:
     return ["unknown", "#", "unknown", "unknown", "-1", []]
 
-  #import pprint
-  #pprint.pprint(raw_comment)
-
-  name, link, user_id, timestamp, comment_html = raw_comment
-  if user_id in FB_SHOW_BLACKLIST:
+  name, link, user_id, timestamp, comment_html, children = raw_comment
+  if (user_id in FB_SHOW_BLACKLIST_IDS or
+      name in FB_SHOW_BLACKLIST_NAMES):
     return ["opted out", "#", "unknown",
             "this user has requested that their comments not be shown here",
             timestamp, []]
 
   return [
     sanitize_name(name),
-    link,
-    comment_id(link),
+    "#",
+    "#",
     sanitize_html(comment_html, raw_names),
-    timestamp,
-    []
+    "-1",
+    [clean_single(child, raw_names) for child in children]
   ]
 
 def clean(raw_threads):
   raw_names = set()
 
-  for raw_thread in reversed(raw_threads):
-    for raw_comment in raw_thread:
-      raw_names.add(raw_comment[0])
-
-  clean_comments = []
   for raw_thread in raw_threads:
-    clean_thread = [clean_single(raw_comment, raw_names)
-                    for raw_comment in raw_thread]
-    clean_parent = clean_thread[0]
-    clean_parent[-1] = clean_thread[1:]
-    clean_comments.append(clean_parent)
+    raw_names.add(raw_thread[0])
+    for raw_reply in raw_thread[-1]:
+      raw_names.add(raw_reply[0])
+
+  clean_comments = [
+    clean_single(raw_thread, raw_names)
+    for raw_thread in raw_threads]
+
   return clean_comments
