@@ -1,99 +1,124 @@
-var open_comments_class_name = "_3hg- _42ft";
-var view_more_class_name = "_4ssp";
-var see_more_class_name = "_5v47";
-var top_level_comments_class_name = "_7a9a";
-var reply_comments_class_name = "_7a9h";
-var comment_class_name = "_3l3x";
-var author_class_name = "_6qw4";
-var metadata_class_name = "_6qw7";
-
-var close_cta = "a[id='expanding_cta_close_button']";
-
-// As long as there are things to click on, click on them.  If there's been
-// nothing to click on for 1s decide we're done.
-var last_click = Date.now();
-function expand_things(callback) {
-  function click(x) {
-    x.click();
-    last_click = Date.now();
+function click_and_mark(el) {
+  if (el.already_clicked || !document.body.contains(el)) {
+    return false;
   }
-  for (var x of document.getElementsByClassName(view_more_class_name)) {
-    click(x);
-  }
-  for (var x of document.getElementsByClassName(see_more_class_name)) {
-    click(x);
-  }
+  el.click();
+  el.already_clicked = true;
+  return true;
+}
 
-  if (last_click > (Date.now() - 1000)) {
-    window.setTimeout(function() {
-      expand_things(callback);
-    }, 100);
-  } else {
-    if (callback) {
-      callback();
+function expand_things() {
+  let expanded_any = false;
+  const close_button = document.querySelector(
+    'div[aria-label="Close"][role="button"]');
+  if (close_button) {
+    if (click_and_mark(close_button)) {
+      expanded_any = close_button;
     }
+  }
+
+  for (const span of document.querySelectorAll(
+    'div:only-child > div:only-child > span:only-child')) {
+    if (span.textContent.trim() == "Most relevant") {
+      if (click_and_mark(span)) {
+        expanded_any = span;
+      }
+    }
+  }
+
+  for (const span of document.querySelectorAll(
+    'div > span:only-child')) {
+    if (span.textContent.trim() == "Oldest") {
+      if (click_and_mark(span)) {
+        expanded_any = span;
+      }
+    }
+  }
+
+  for (const span of document.querySelectorAll(
+    'div > span:only-child > span:only-child')) {
+    const text = span.textContent.trim();
+    if (text === '1 Reply' || /^\d+ Replies$/.test(text)) {
+      if (click_and_mark(span)) {
+        expanded_any = span;
+      }
+    }
+  }
+
+  for (const span of document.querySelectorAll(
+    'div > span:only-child > span:only-child')) {
+    if (span.textContent.trim() === "View more replies") {
+      if (click_and_mark(span)) {
+        expanded_any = span;
+      }
+    }
+  }
+
+  for (const div of document.querySelectorAll(
+    'div > div:only-child > div:only-child')) {
+    if (div.textContent.trim() === "See more") {
+      if (click_and_mark(div)) {
+        expanded_any = div;
+      }
+    }
+  }
+
+  if (expanded_any) {
+    window.setTimeout(expand_things, 100);
+  } else {
+    collect_comments();
   }
 }
 
-function examine_comments() {
-  collected_comments = [];
-  var top_level_ul =
-      document.getElementsByClassName(top_level_comments_class_name)[0];
-  for (var i = 0; i < top_level_ul.children.length; i++) {
-    var state = "initial";
-
-    var name = null;
-    var link = null;
-    var userid = null;
-    var ts = null;
-    var comment_html = null;
-
-    var thread = [];
-
-    var nodes = [top_level_ul.children[i]];
-    while (nodes.length > 0) {
-      var node = nodes.pop();
-
-      if (node.classList.contains(comment_class_name)) {
-        comment_html = node.innerHTML;
-      }
-
-      if (node.classList.contains(metadata_class_name)) {
-        link = node.getAttribute("href");
-        if (node.children.length == 1 && node.children[0].tagName == "ABBR") {
-          ts = node.children[0].getAttribute("data-utime");
-        }
-      }
-
-      if (node.classList.contains(author_class_name)) {
-        var data_hovercard = node.getAttribute("data-hovercard");
-        if (data_hovercard) {
-          var match = data_hovercard.match(
-            /.*[/]user[.]php[?]id=(?<userid>[0-9]+).*$/);
-          if (match && match.groups.userid) {
-            userid = match.groups.userid;
-          }
-        }
-
-        name = node.textContent;
-
-        // This is assuming author_class_name is the last one we get.
-        var comment = [name, link, userid, ts, comment_html];
-        name = null;
-        ts = null;
-        comment_html = null;
-        link = null;
-        userid = null;
-
-        thread.push(comment);
-      }
-      for (var j = 0; j < node.children.length; j++) {
-        nodes.push(node.children[j]);
-      }
+function get_name(comment_div) {
+  for (const span of comment_div.querySelectorAll(
+    'div > span > a > span:only-child > span:only-child')) {
+    if (span.dir === "auto") {
+      return span.textContent.trim();
     }
-    // Sort by time ascending.
-    thread.sort(function(a, b) { return Number(a[3]) - Number(b[3]); });
-    collected_comments.push(thread);
+  }
+  for (const span of comment_div.querySelectorAll(
+    'div > div:only-child > span > span:only-child')) {
+    if (span.dir === "auto") {
+      return span.textContent.trim();
+    }
+  }
+  return "";
+}
+
+function get_html(comment_div) {
+  const htmls = [];
+  for (const div of comment_div.querySelectorAll(
+    'div > span > div > div')) {
+    if (div.dir === "auto" &&
+        div.getAttribute("style") === 'text-align: start;') {
+      htmls.push(div.innerHTML);
+    }
+  }
+  return htmls.join("\n")
+}
+
+
+function collect_comments() {
+  const collected_comments = [];
+
+  for (const comment_div of document.querySelectorAll("div")) {
+    if ( (comment_div.ariaLabel || "").startsWith("Comment by ")) {
+      const comment_html = get_html(comment_div);
+      const comment_name = get_name(comment_div);
+
+      let comment = [comment_name, null, null, null, comment_html, []];
+      for (const reply_div of comment_div.parentElement.querySelectorAll("div")) {
+        if ( (reply_div.ariaLabel || "").startsWith("Reply by ")) {
+          const reply_html = get_html(reply_div);
+          const reply_name = get_name(reply_div);
+
+          comment[5].push([
+            reply_name, null, null, null, reply_html, []]);
+        }
+      }
+      collected_comments.push(comment);
+    }
   }
   done(collected_comments);
 }
@@ -119,17 +144,4 @@ function done(collected_comments) {
     [slug, makeDataUrl(JSON.stringify(collected_comments))]);
 }
 
-var expand_comments_potential = document.getElementsByClassName(
-  open_comments_class_name);
-if (expand_comments_potential.length == 1) {
-  expand_comments_potential[0].click();
-  expand_things(function() {
-    var cta_button = document.querySelector(close_cta);
-    if (cta_button) {
-      cta_button.click();
-    }
-    examine_comments();
-  });
-} else {
-  done([]);
-}
+expand_things();
