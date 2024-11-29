@@ -36,7 +36,7 @@ with open("dated_comment_services.json") as inf:
                 end tell
                 """ % url])
 
-            if False:
+            if True:
                 raise Exception("breakpoint")
             
             time.sleep(10)
