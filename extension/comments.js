@@ -66,7 +66,7 @@ function expand_things() {
   if (expanded_any) {
     window.setTimeout(expand_things, 100);
   } else {
-    collect_comments();
+    window.setTimeout(collect_comments, 1000);
   }
 }
 
@@ -120,6 +120,7 @@ function collect_comments() {
       collected_comments.push(comment);
     }
   }
+  console.log(collected_comments);
   done(collected_comments);
 }
 
@@ -135,8 +136,14 @@ function done(collected_comments) {
     return;
   }
 
-  document.title = collected_comments.length + " comment" +
-    (collected_comments.length == 1 ? "" : "s");
+  let n_comments = 0;
+  for (const comment of collected_comments) {
+    n_comments += 1;
+    n_comments += comment[5].length;
+  }
+  
+  document.title = n_comments + " comment" +
+    (n_comments == 1 ? "" : "s");
   var location_parts = document.location.href.split("/");
   var slug = location_parts[location_parts.length - 1];
   chrome.runtime.sendMessage(
