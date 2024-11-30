@@ -14,6 +14,7 @@ def start():
   archive = os.path.expanduser("~/Google Drive/My Drive/comment-archive")
   
   for fname in glob.glob(os.path.join(downloads, "pfbid*.json")):
+  #for fname in glob.glob(os.path.join(downloads, "101*.json")):
     leaf = os.path.basename(fname)
     if leaf.count('.') != 1:
       continue
